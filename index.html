@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#171A20" />
+
+    <title>Private Dubai Layover Tours | Airport Pickup &amp; Guaranteed On-Time Return</title>
+    <meta
+      name="description"
+      content="Turn your Dubai layover into an unforgettable private city tour. Airport pickup from all DXB terminals, tailor-made itineraries from 2–10 hours, and a guaranteed on-time return for your next flight. From $140."
+    />
+    <link rel="canonical" href="https://www.layoverindubai.com/" />
+
+    <meta property="og:title" content="Don't Spend Your Dubai Layover Inside the Airport" />
+    <meta
+      property="og:description"
+      content="Private Dubai layover tours with airport pickup, flight tracking, and guaranteed on-time return. From $140 · Free cancellation up to 24h."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.layoverindubai.com/" />
+    <meta property="og:site_name" content="Layover in Dubai" />
+    <!-- Served from public/ at a stable path, because social crawlers need an
+         absolute URL and bundled assets get content-hashed filenames. -->
+    <meta property="og:image" content="https://www.layoverindubai.com/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="800" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Local SEO.
+         priceRange must stay in sync with src/data/pricing.js — it is the one
+         price string in the project that is not derived from that module.
+
+         Deliberately NO aggregateRating: this is a TravelAgency (a LocalBusiness
+         subtype), where Google does not accept self-serving first-party review
+         markup. Adding it risks a structured-data manual action for no gain.
+
+         TODO(owner): add "address", "openingHoursSpecification" and your tourism
+         licence number once you can supply the registered business details. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "TravelAgency",
+        "name": "Layover in Dubai",
+        "description": "Private Dubai layover and stopover tours with airport pickup and guaranteed on-time return.",
+        "url": "https://www.layoverindubai.com/",
+        "telephone": "+971508269272",
+        "email": "book@layoverindubai.com",
+        "areaServed": "Dubai, United Arab Emirates",
+        "priceRange": "$140 - $460",
+        "sameAs": [
+          "https://www.facebook.com/layoverindubai/",
+          "https://www.layoverindubai.com/"
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <noscript>
+      <p style="font-family: system-ui, sans-serif; padding: 24px; text-align: center">
+        This page needs JavaScript to load. You can contact us directly instead:
+        <a href="mailto:book@layoverindubai.com">book@layoverindubai.com</a> or
+        <a href="tel:+971508269272">+971 508 269 272</a>
+      </p>
+    </noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

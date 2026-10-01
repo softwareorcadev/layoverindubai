@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Layover in Dubai">
+  <rect width="64" height="64" rx="14" fill="#171A20"/>
+  <!-- Font Awesome 6 "plane-departure" (CC BY 4.0), scaled into the tile -->
+  <g transform="translate(8 12) scale(0.0313)" fill="#DCBE74">
+    <path d="M.3 166.9L0 68C0 57.7 9.5 50.1 19.5 52.3l35.6 7.9c10.6 2.3 19.2 9.9 23 20L96 128l127.3 37.6L181.8 20.4C178.9 10.2 186.6 0 197.2 0h40.1c11.6 0 22.2 6.2 27.9 16.3l109 190.7 129.8 38.3c18.6 5.5 31.3 22.5 31.3 41.9c0 14.4-7 27.9-18.7 36.2s-26.6 10.5-40.2 6.1L21.7 194.6C8.7 190.4 .5 178.7 .3 166.9zM19.5 288H240c8.8 0 16 7.2 16 16s-7.2 16-16 16H19.5c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/>
+  </g>
+</svg>

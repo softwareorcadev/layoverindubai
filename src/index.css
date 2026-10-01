@@ -1,0 +1,393 @@
+@import 'tailwindcss';
+
+/* ══════════════════════════════════════════════════════════════════════
+   DESIGN TOKENS
+   Port of the original page's Tailwind v3 `tailwind.config.theme.extend`
+   into v4's @theme. Tailwind v4 has NO `DEFAULT` key concept: v3's
+   `ink: { DEFAULT, soft, faint }` becomes three flat sibling variables.
+   Do NOT write --color-ink-DEFAULT — that emits bg-ink-DEFAULT and leaves
+   bg-ink undefined, silently killing every bg-ink/text-ink/from-ink.
+   ══════════════════════════════════════════════════════════════════════ */
+@theme {
+  --font-display: 'Poppins', 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  /* v4 Preflight sets html { font-family: --theme(--font-sans, …) } */
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* ink — bg-ink, text-ink, bg-ink/70, bg-ink/85, bg-ink/90,
+     border-ink/15, ring-ink/85, from-ink, via-ink/55, to-ink/25 … */
+  --color-ink: #171a20;
+  --color-ink-soft: #4b505a;
+  --color-ink-faint: #8a8f99;
+
+  --color-sand-50: #faf8f3;
+  --color-sand-100: #f4f0e7;
+  --color-sand-200: #e9e3d4;
+
+  --color-gold-50: #f9f2e0;
+  --color-gold-100: #f2e6c7;
+  --color-gold-300: #dcbe74;
+  --color-gold-400: #cba34d;
+  --color-gold-500: #b98a2f;
+  --color-gold-600: #9c7322;
+  --color-gold-700: #7c5a19;
+
+  --color-line: #e7e1d3;
+
+  /* Status green for the hero's "your driver is waiting" pulse. A semantic
+     live-indicator colour, not a brand colour — the only non-palette hue on
+     the page, and it earns its place by signalling "live" rather than "gold". */
+  --color-live: #34c759;
+
+  --shadow-lux: 0 30px 70px -28px rgb(23 26 32 / 0.22);
+  --shadow-card: 0 14px 34px -14px rgb(23 26 32 / 0.14);
+  --shadow-gold: 0 14px 30px -10px rgb(185 138 47 / 0.45);
+
+  /* v3 maxWidth.wrap → v4 --container-* namespace → max-w-wrap */
+  --container-wrap: 72rem;
+
+  /* The only default-palette colours the page uses (#formError). v4 ships
+     reds in OKLCH; pin them to the v3 hex values for exact parity. */
+  --color-red-50: #fef2f2;
+  --color-red-600: #dc2626;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   BASE — loses to every utility, so tracking-* can still override
+   ══════════════════════════════════════════════════════════════════════ */
+@layer base {
+  :root {
+    /* Cleared by the fixed header. Overwritten at runtime by
+       useHeaderOffset() from the header's real height; these are the
+       pre-JS fallbacks (mobile header is two rows, so it is taller). */
+    scroll-padding-top: 136px;
+  }
+
+  @media (min-width: 768px) {
+    :root {
+      scroll-padding-top: 88px;
+    }
+  }
+
+  /* Was class="scroll-smooth" on <html> in the original. Expressed in CSS
+     so it cannot be lost to Tailwind source detection, and so the
+     reduced-motion block below can override it. */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .font-display {
+    letter-spacing: -0.02em;
+  }
+
+  /* ── Tailwind v3 → v4 Preflight parity ─────────────────────────────
+     v4 dropped v3's `button { cursor: pointer }`. Without this, the
+     accordion headers, carousel arrows, traveller profile cards and every
+     card CTA lose their pointer cursor. */
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+
+  /* v4 Preflight sets ::placeholder to color-mix(currentcolor 50%), and
+     these inputs inherit text-ink (#171A20) — so placeholders would go
+     near-black. v3 used gray-400. */
+  input::placeholder,
+  textarea::placeholder {
+    color: #9ca3af;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   COMPONENTS — ported verbatim from the original <style> block.
+   In @layer components so Tailwind utilities keep winning on conflicts,
+   reproducing the original cascade (the Play CDN appended its stylesheet
+   to <head> after the author <style>, so utilities won).
+   ══════════════════════════════════════════════════════════════════════ */
+@layer components {
+  /* ── Gold CTA ────────────────────────────────────────────────────── */
+  .btn-gold {
+    background: linear-gradient(135deg, #d9b662 0%, #b98a2f 55%, #a0741f 100%);
+    transition:
+      transform 0.18s ease,
+      box-shadow 0.18s ease,
+      filter 0.18s ease;
+  }
+  .btn-gold:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+    box-shadow: 0 18px 38px -12px rgb(185 138 47 / 0.55);
+  }
+  .btn-gold:active {
+    transform: translateY(0);
+  }
+
+  /* ── Boarding-pass barcode accent ────────────────────────────────── */
+  .barcode {
+    background: repeating-linear-gradient(
+      90deg,
+      currentColor 0 2px,
+      transparent 2px 5px,
+      currentColor 5px 6px,
+      transparent 6px 10px,
+      currentColor 10px 13px,
+      transparent 13px 16px
+    );
+    opacity: 0.28;
+  }
+
+  /* ── Scroll reveal ───────────────────────────────────────────────── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.7s ease,
+      transform 0.7s ease;
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ── Accordion (grid-rows trick — no JS height measurement) ──────── */
+  .acc-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s ease;
+  }
+  .acc-panel > div {
+    overflow: hidden;
+  }
+  .acc-open .acc-panel {
+    grid-template-rows: 1fr;
+  }
+  .acc-open .acc-chev {
+    transform: rotate(180deg);
+  }
+  .acc-chev {
+    transition: transform 0.3s ease;
+  }
+
+  /* ── Hero image slow drift ───────────────────────────────────────── */
+  @keyframes drift {
+    from {
+      transform: scale(1.06);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+  .hero-img {
+    animation: drift 9s ease-out forwards;
+  }
+
+  /* ── Carousel ────────────────────────────────────────────────────── */
+  .snapx {
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .snapx::-webkit-scrollbar {
+    display: none;
+  }
+  .snapx > * {
+    scroll-snap-align: start;
+  }
+
+  /* ── Fading number in the hero boarding stub ─────────────────────── */
+  .fade-swap {
+    transition: opacity 0.35s ease;
+  }
+
+  /* ══════════════════════════════════════════════════════════════════
+     BUTTON SKINS — new, for the per-section CTA system.
+     .btn-gold above already existed. These siblings give the CTA weight
+     ladder: gold → ink → outline → mail → link-arrow.
+     Existing buttons ported from the original page keep their own
+     verbatim utility strings; these are only used by new CTA blocks.
+     ══════════════════════════════════════════════════════════════════ */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition:
+      transform 0.18s ease,
+      border-color 0.18s ease,
+      background-color 0.18s ease,
+      color 0.18s ease,
+      box-shadow 0.18s ease;
+  }
+
+  .btn-outline {
+    border: 1px solid rgb(23 26 32 / 0.15);
+    color: #171a20;
+  }
+  .btn-outline:hover {
+    border-color: #b98a2f;
+    color: #9c7322;
+    transform: translateY(-1px);
+  }
+
+  .btn-outline-light {
+    border: 1px solid rgb(255 255 255 / 0.25);
+    color: rgb(255 255 255 / 0.9);
+  }
+  .btn-outline-light:hover {
+    border-color: rgb(255 255 255 / 0.6);
+    color: #fff;
+    transform: translateY(-1px);
+  }
+
+  .btn-ink {
+    background: #171a20;
+    color: #fff;
+  }
+  .btn-ink:hover {
+    background: #9c7322;
+  }
+
+  /* The soft "email us instead" option — the low-friction rung of the CTA
+     ladder. Tinted from the page's own gold rather than a messaging-app
+     brand colour, so nothing on the page imports a third-party palette. */
+  .btn-mail {
+    border: 1px solid rgb(185 138 47 / 0.42);
+    background: rgb(185 138 47 / 0.09);
+    color: #7c5a19;
+  }
+  .btn-mail:hover {
+    background: rgb(185 138 47 / 0.16);
+    border-color: #b98a2f;
+    transform: translateY(-1px);
+  }
+
+  .btn-mail-dark {
+    border: 1px solid rgb(220 190 116 / 0.35);
+    background: rgb(255 255 255 / 0.06);
+    color: #dcbe74;
+  }
+  .btn-mail-dark:hover {
+    background: rgb(255 255 255 / 0.11);
+    border-color: rgb(220 190 116 / 0.6);
+    color: #f2e6c7;
+  }
+
+  .link-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #9c7322;
+  }
+  .link-arrow:hover {
+    color: #7c5a19;
+  }
+  .link-arrow i {
+    transition: transform 0.18s ease;
+  }
+  .link-arrow:hover i {
+    transform: translateX(3px);
+  }
+
+  .link-arrow-light {
+    color: #dcbe74;
+  }
+  .link-arrow-light:hover {
+    color: #f2e6c7;
+  }
+
+  /* ══════════════════════════════════════════════════════════════════
+     HEADER JUMP PILLS — the two scroll-to controls that replaced the
+     nav menu. Bordered pills read as controls rather than a menu.
+     Gold appears only on hover/active so the "Book Your Tour" button
+     keeps sole ownership of full gold in the bar.
+     ══════════════════════════════════════════════════════════════════ */
+  .jump {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border: 1px solid rgb(255 255 255 / 0.12);
+    border-radius: 0.75rem;
+    padding: 0.5rem 0.85rem;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgb(255 255 255 / 0.82);
+    white-space: nowrap;
+    transition:
+      color 0.18s ease,
+      border-color 0.18s ease,
+      background-color 0.18s ease;
+  }
+  .jump:hover {
+    color: #fff;
+    border-color: rgb(203 163 77 / 0.6);
+    background: rgb(255 255 255 / 0.06);
+  }
+  .jump.is-active {
+    color: #fff;
+    border-color: rgb(203 163 77 / 0.7);
+    background: rgb(185 138 47 / 0.18);
+  }
+  .jump.is-active i {
+    color: #dcbe74;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   UNLAYERED — must beat utilities. Kept outside @layer on purpose.
+   ══════════════════════════════════════════════════════════════════════ */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid #b98a2f;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Section headings are focus targets for the header jump links, but they
+   should not paint a ring when focused programmatically. */
+h2[tabindex='-1']:focus-visible {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .hero-img {
+    animation: none;
+  }
+  /* Video playback is not a CSS animation, so the blanket
+     animation-duration rule below does nothing to it. The hero showreel is
+     already gated in JS (Hero.jsx reads useBooking().reducedMotion and does
+     not mount the <video> at all, which is the only way to spend zero bytes);
+     this is the backstop for any autoplaying video that ever slips past that,
+     and it reveals the poster <img> underneath rather than a blank box. */
+  video[autoplay] {
+    display: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
